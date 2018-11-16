@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link href="./css/style.css" rel="stylesheet">
+</head>
+<body>
+
+	<div class="audentification-block">
+		<div class="login-block" data-action="/login">
+			<h1>Login</h1>
+			<input name="login" type="text" class="login-block__input_login" placeholder="Login">
+			<input name="password" type="password" class="login-block__input_password" placeholder="Password">
+			You do not have an account? <a href="/registration" class="login-block__href">Go to registration</a>
+			<button type="submit" class="login-block__btn_login">Login</button>
+			<div class="login-block__error"></div>
+		</div>
+	</div>
+
+	<script src="./js/script.js"></script>
+	<script src="./js/login.js"></script>
+</body>
+</html>

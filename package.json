@@ -1,0 +1,22 @@
+{
+  "name": "WebChai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "public/script.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "morgan": "^1.9.1",
+    "ws": "^6.1.0"
+  },
+  "devDependencies": {
+    "express": "^4.16.4",
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server"
+  },
+  "author": "Jane Bond 007",
+  "license": "ISC"
+}

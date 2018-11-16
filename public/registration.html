@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link href="./css/style.css" rel="stylesheet">
+</head>
+<body>
+
+	<div class="audentification-block">
+		<div class="registration-block" data-action="/registration">
+			<h1>Registration</h1>
+
+			<div class="titleReg">Fill in the fields</div>
+
+			<label for="nameReg">Name*</label>
+			<input name="name" type="text" id="nameReg" class="input-text nameReg"> <br>
+
+			<label for="surnameReg">Surname*</label>
+			<input name="surname" type="text" id="surnameReg" class="input-text surnameReg"><br>
+
+			<label for="ageReg">Age</label>
+			<input name="age" type="text" id="ageReg" class="input-text ageReg"><br>
+
+			<label for="loginReg">Login*</label>
+			<input name="login" type="text" id="loginReg" class="input-text loginReg"><br>
+
+			<label for="passwordReg">Password*</label>
+			<input name="password" type="text" id="passwordReg" class="input-text passwordReg"><br>
+
+			<label for="confirmPasswordReg">Confirm password*</label>
+			<input type="text" id="confirmPasswordReg" class="input-text confirmPasswordReg">
+
+			<button class="registration-btn">Registrate</button>
+			<div class="registration-block__error"></div>
+		</div>
+
+	</div>
+	<script src="./js/script.js"></script>
+	<script src="./js/registration.js"></script>
+</body>
+</html>
