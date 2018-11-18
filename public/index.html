@@ -8,18 +8,31 @@
 <body>
 
 
-<div id="status-text"></div>
-<!-- форма для отправки сообщений -->
-<form name="publish">
-  <input type="text" name="message"/>
-  <button type="submit">Отправить</button>
-  <button type="button" name="exit">Выйти</button>
-</form>
 
-<!-- здесь будут появляться входящие сообщения -->
-<div id="subscribe"></div>
 
+  <div class="main-block">
+
+
+    <div class="main-block__status">
+      <div id="status-text"></div>
+    </div>
+    <div class="chat-block">
+      <div class="chat-block__exit">
+        <button type="button" name="exit" class="chat-block__exit-btn">Выйти</button>
+     </div>
+      <!-- здесь будут появляться входящие сообщения -->
+      <div id="subscribe" class="chat-block__message-block"></div>
+      <!-- форма для отправки сообщений -->
+      <form name="publish" class="chat-block__form">
+        <input type="text" name="message" class="chat-block__input"/>
+        <button type="submit">Отправить</button>
+        <!-- <button type="button" name="exit">Выйти</button> -->
+      </form>
+
+    </div>
+  </div>
 <script src="./js/script.js"></script>
+<script src="./js/webSocket.js"></script>
 
 </body>
 </html>

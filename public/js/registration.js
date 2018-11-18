@@ -23,10 +23,10 @@ registrationBtnElem.addEventListener("click", function() {
   		return;
   	}
   	let response = JSON.parse(this.responseText);
-  	if (response.status === "error") {
-  		registrationErrorBlockElem.innerHTML = response.statusText;
+  	if (response.error) {
+  		registrationErrorBlockElem.innerHTML = response.error.errorText;
   	}
-  	if (response.status === "success") {
+  	if (response.success) {
 
   	}
   }

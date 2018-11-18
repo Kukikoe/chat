@@ -37,3 +37,79 @@ body {
     padding: 5px;
     border: none;
 }
+
+.main-block {
+    border: 1px solid #000;
+    width: 610px;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+}
+
+.main-block__status {
+    width: 25%;
+    border: 1px solid #000;
+    padding: 5px;
+}
+
+.chat-block {
+    border: 1px solid #000;
+    width: 75%;
+    margin-left: auto;
+}
+
+.chat-block__message-block {
+    height: 518px;
+    background-color: #eee;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-block__exit {
+    padding: 5px;
+    background-color: #465c87;
+}
+
+.chat-block__exit-btn {
+    display: block;
+    margin-left: auto;
+}
+
+.chat-block__form {
+    padding: 5px;
+    background-color: #465c87;
+}
+
+.chat-block__input {
+    width: 330px;
+    padding: 5px;
+    outline: none;
+}
+
+.chat-block__message, .chat-block__incoming-message {
+    display: inline-block;
+    background-color: #cbcbc7;
+    padding: 8px;   
+    min-width: 100px;
+    max-width: 250px;
+    min-height: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    word-wrap: break-word;
+}
+
+.chat-block__message {
+   margin-left: auto;
+}
+
+.chat-block__incoming-message {
+    margin-right: auto;
+}
+
+.chat-block__name-of-user {
+    color: #465c87;
+    font-weight: bold;
+}
+

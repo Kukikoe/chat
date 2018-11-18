@@ -17,11 +17,13 @@ btnLoginElem.addEventListener("click", function() {
       return;
     }
     let response = JSON.parse(this.responseText);
-    if (response.status === "error") {
-      errorLoginBlockElem.innerHTML = response.statusText;
-    }
-    if (response.status === "success") {
 
+    if (response.error) {
+      errorLoginBlockElem.innerHTML = response.error.errorText;
+    }
+    if (response.success) {
+      localStorage.setItem("LoggedInUser", JSON.stringify(response.success.user));
+      document.location.href = response.redirect;
     }
   }
 });

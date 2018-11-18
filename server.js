@@ -48,9 +48,9 @@ app.post("/login", function(req, res) {
   let {login, password} = req.body;
   connection.query("SELECT * FROM users WHERE login=?", [login], function(err, rows) {
     if (err) throw err;
-    if (!rows.length) return res.send({status: "error", statusText: "User not found"});
-    if (rows[0].password !== password) return res.send({status: "error", statusText: "Password is incorrect"});
-    return res.send({status: "success", statusText: "Logged in"});
+    if (!rows.length) return res.send({error: { errorText: "User not found"}});
+    if (rows[0].password !== password) return res.send({error: { errorText: "Password is incorrect"}});
+    return res.send({success: { successText: "Logged in", user: rows[0]}, redirect: "chat"});
   });
 });
 
@@ -58,11 +58,11 @@ app.post("/registration", function(req, res) {
   let {name, surname, age, login, password} = req.body;
   connection.query("SELECT * FROM users WHERE login=?", [login], function(err, rows) {
     if (err) throw err;
-    if (rows.length) return res.send({status: "error", statusText: "User with such login already exists"});
-     connection.query("INSERT INTO users (firstname, lastname, age, login, password) VALUES (?, ?, ?, ?, ?)", [name, surname, age, login, password], function(error, elem) {
-   if (error) throw error;
-   return res.send({status: "success", statusText: "You registrate"});
-     });
+    if (rows.length) return res.send({error: { errorText: "User with such login already exists"}});
+    connection.query("INSERT INTO users (firstname, lastname, age, login, password) VALUES (?, ?, ?, ?, ?)", [name, surname, age, login, password], function(error, elem) {
+     if (error) throw error;
+     return res.send({success: { successText: "You registrate"}});
+   });
   });
 });
 
@@ -74,21 +74,24 @@ app.get("/registration", function(req, res) {
   res.sendfile("public/registration.html");
 });
 
+app.get("/chat", function(req, res) {
+  res.sendfile("public/index.html");
+});
+
 let webSocketServer = new WebSocketServer.Server({port: 8081});
 
 webSocketServer.on('connection', function(ws) {
-
   console.log("новое соединение");
 
   ws.on('message', function(message) {
-    console.log('получено сообщение ' + message);
+    let obj = JSON.parse(message);
+    console.log('получено сообщение ' + obj.message);
 
     webSocketServer.clients.forEach(client =>  {
       if (client.readyState !== WebSocketServer.OPEN) return;
       client.send(message);
     });   
   });
-
 
   ws.on('close', function(e) {
     console.log('соединение закрыто ' + e);
