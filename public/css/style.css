@@ -39,8 +39,9 @@ body {
 }
 
 .main-block {
+    margin-top: 50px;
     border: 1px solid #000;
-    width: 610px;
+    width: 680px;
     height: 600px;
     margin-left: auto;
     margin-right: auto;
@@ -48,19 +49,18 @@ body {
 }
 
 .main-block__status {
-    width: 25%;
-    border: 1px solid #000;
+    width: 30%;
     padding: 5px;
+    background-color: #465c87;
 }
 
 .chat-block {
-    border: 1px solid #000;
-    width: 75%;
+    width: 70%;
     margin-left: auto;
 }
 
 .chat-block__message-block {
-    height: 518px;
+    height: 520px;
     background-color: #eee;
     padding: 5px;
     display: flex;
@@ -83,13 +83,14 @@ body {
 }
 
 .chat-block__input {
-    width: 330px;
+    width: 350px;
     padding: 5px;
     outline: none;
 }
 
 .chat-block__message, .chat-block__incoming-message {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     background-color: #cbcbc7;
     padding: 8px;   
     min-width: 100px;
@@ -112,4 +113,36 @@ body {
     color: #465c87;
     font-weight: bold;
 }
+
+.person {
+    padding: 5px;
+    display: flex;
+}
+
+.person__photo {
+    width: 40px;
+    height: 40px;
+    background-image: url(../img/man.svg);
+    border-radius: 50px;
+}
+
+.person__info {
+    margin-left: 8px;
+}
+
+.person__name {
+    color: #000;
+    font-weight: bold;
+}
+
+.person__status {
+    color: #fff;
+}
+
+.chat-block__time {
+    margin-left: auto;
+    word-wrap: break-word;
+}
+
+
 

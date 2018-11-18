@@ -79,24 +79,63 @@ app.get("/chat", function(req, res) {
 });
 
 let webSocketServer = new WebSocketServer.Server({port: 8081});
+let users = [];
 
 webSocketServer.on('connection', function(ws) {
   console.log("новое соединение");
+  
+  let userIndex;
 
   ws.on('message', function(message) {
-    let obj = JSON.parse(message);
-    console.log('получено сообщение ' + obj.message);
+    let incomingMsg = JSON.parse(message);
+    let outgoingMsg = {};
+
+    if (incomingMsg.connecting) {
+      let temp = users.filter(user => user.name === incomingMsg.name).length;
+
+      if (temp) {
+        users = users.map((user) => {
+          if (user.name === incomingMsg.name) {
+            user.status = "online";
+            userIndex = user.index;
+          }
+          return user;
+        });
+      } 
+      else {
+        let user = {
+          name: incomingMsg.name,
+          status: "online"
+        }
+        userIndex = users.push(user);
+        userIndex--;
+        user.index = userIndex;
+      }
+      outgoingMsg.users = users;
+    }
+
+    if (incomingMsg.message) {
+      outgoingMsg.message = incomingMsg.message;
+    }
+    console.log('получено сообщение ' + incomingMsg);
 
     webSocketServer.clients.forEach(client =>  {
       if (client.readyState !== WebSocketServer.OPEN) return;
-      client.send(message);
+      return client.send(JSON.stringify(outgoingMsg));
     });   
   });
 
   ws.on('close', function(e) {
+    users[userIndex].status = "offline";
+
+    webSocketServer.clients.forEach(client =>  {
+      if (client.readyState !== WebSocketServer.OPEN) return;
+      return client.send(JSON.stringify({
+        users
+      }));
+    });  
     console.log('соединение закрыто ' + e);
   });
-
 });
 
 app.listen(8080, () => console.log("Server is listening. Ports: 8080, 8081"));
