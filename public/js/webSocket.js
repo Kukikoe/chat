@@ -4,8 +4,10 @@ if (!window.WebSocket) {
 let socket = new WebSocket("ws://localhost:8081");
 const btnExetElem = document.querySelector(".chat-block__exit-btn");
 const statusBlockElem = document.querySelector(".main-block__status");
+const chatBlockInputElem = document.querySelector(".chat-block__input");
+const sendMessageBtnElem = document.querySelector(".chat-block__send-msg");
 
-socket.addEventListener('open', function(e){
+socket.addEventListener('open', function(){
 	let name = getPersonName();
 	let obj = {
 		name, 
@@ -15,11 +17,11 @@ socket.addEventListener('open', function(e){
 	socket.send(JSON.stringify(obj));
 });
 
-socket.addEventListener('close', function(e){
+/*socket.addEventListener('close', function(e){
 
 	//setStatus("Offline");
 	//document.location.href = "/login";
-});
+});*/
 
 socket.addEventListener('message', function(e){
 	let obj = JSON.parse(e.data);
@@ -42,12 +44,9 @@ socket.addEventListener('message', function(e){
 	showMessage(obj.message.text, obj.message.name, obj.message.time, "chat-block__incoming-message");
 });
 
-
-document.forms.publish.addEventListener("submit", function(e) {
-  e.preventDefault();
-  
-  var outgoingMessage = this.message.value;
-  this.message.value = "";
+sendMessageBtnElem.addEventListener("click", function() {
+  var outgoingMessage = chatBlockInputElem.value;
+  chatBlockInputElem.value = "";
 	let user = JSON.parse(localStorage.getItem("LoggedInUser"));
 	let userName = user.firstname + " " + user.lastname;
 	let now = new Date();
@@ -59,8 +58,14 @@ document.forms.publish.addEventListener("submit", function(e) {
 			time
 		}
 	}
-  socket.send(JSON.stringify(obj));
+	socket.send(JSON.stringify(obj));
 });
+
+btnExetElem.addEventListener("click", function() {
+  if (socket.readyState !== 1) return; // If not OPEN 
+  socket.close();
+});
+
 
 function getPersonName() {
 	let currentUser = JSON.parse(localStorage.getItem("LoggedInUser"));
@@ -93,19 +98,6 @@ function addPersonInStatusBlock(name, status) {
 	personElem.appendChild(personInfoElem);
 	statusBlockElem.appendChild(personElem);
 }
-
-btnExetElem.addEventListener("click", function(e) {
-  if (socket.readyState !== 1) return; // If not OPEN 
-/*	let name = getPersonName();
-		let obj = {
-		name, 
-		connecting: false
-	}
-	console.log(obj)
-	socket.send(JSON.stringify(obj));*/
-  
-  socket.close();
-});
 
 function showMessage(message, name, time, className) {
 	let messageElem = document.createElement('div');
