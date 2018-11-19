@@ -22,6 +22,11 @@ body {
     margin-right: auto;
 }
 
+.login-block__error, .registration-block__error {
+    color: red;
+    margin-top: 5px;
+}
+
 
 
 .login-block__input_login, .login-block__input_password, .input-text {
