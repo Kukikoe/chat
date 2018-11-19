@@ -15,26 +15,40 @@ const server_config = {
 const db_config = {
   host: 'localhost',
   user: 'root',
-  password: '',
-  database: 'chat'
+  password: ''
 };
 
-let connection;
+let connection = mysql.createConnection(db_config);
+
+connection.query('CREATE DATABASE IF NOT EXISTS chat', function (err) {
+  if (err) throw err;
+  connection.query('USE chat', function (err) {
+    if (err) throw err;
+    connection.query('CREATE TABLE IF NOT EXISTS users('
+      + 'id INT NOT NULL AUTO_INCREMENT,'
+      + 'PRIMARY KEY(id),'
+      + 'firstname VARCHAR(30),'
+      + 'lastname VARCHAR(30),'
+      + 'passwords VARCHAR(50),'
+      + 'login VARCHAR(50),'
+      + 'age INT(2)'
+      +  ')', function (err) {
+      if (err) throw err;
+    });
+  });
+});
 
 function handleDisconnect() {
-  connection = mysql.createConnection(db_config); // Recreate the connection, since
-                                                  // the old one cannot be reused.
-  connection.connect(function(err) {              // The server is either down
-    if(err) {                                     // or restarting (takes a while sometimes).
-      setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
-    }                                     // to avoid a hot loop, and to allow our node script to
-  });                                     // process asynchronous requests in the meantime.
-                                          // If you're also serving http, display a 503 error.
+  connection.connect(function(err) {              
+    if(err) {                                    
+      setTimeout(handleDisconnect, 2000); 
+    }                                    
+  });                                    
   connection.on('error', function(err) {
-    if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
-      handleDisconnect();                         // lost due to either server restart, or a
-    } else {                                      // connnection idle timeout (the wait_timeout
-      throw err;                                  // server variable configures this)
+    if(err.code === 'PROTOCOL_CONNECTION_LOST') { 
+      handleDisconnect();                         
+    } else {                                     
+      throw err;                                  
     }
   });
 }
@@ -50,6 +64,7 @@ app.use(express.static(__dirname + "/public"));
 
 // Routes
 app.post("/login", function(req, res) {
+ 
   let {login, password} = req.body;
   connection.query("SELECT * FROM users WHERE login=?", [login], function(err, rows) {
     if (err) throw err;
@@ -61,7 +76,6 @@ app.post("/login", function(req, res) {
 
 app.post("/registration", function(req, res) {
   let {name, surname, age, login, password} = req.body;
-  console.log("password", password)
   connection.query("SELECT * FROM users WHERE login=?", [login], function(err, rows) {
     if (err) throw err;
     if (rows.length) return res.send({error: { errorText: "User with such login already exists"}});

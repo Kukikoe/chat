@@ -121,11 +121,12 @@ body {
 }
 
 .chat-block__message-block {
-    height: calc(100% - 49px);
+    height: calc(100% - 60px);
     background-color: #eee;
-    padding: 5px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
+    overflow: auto;
 }
 
 .chat-block__form {
@@ -157,17 +158,47 @@ body {
     min-width: 100px;
     max-width: 250px;
     min-height: 10px;
-    border-radius: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     word-wrap: break-word;
+    position: relative;
+    flex-shrink: 0;
+}
+
+
+.chat-block__incoming-message::before,
+.chat-block__incoming-message::after,
+.chat-block__message::before,
+.chat-block__message::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: #cbcbc7;
+    position: absolute;
+    bottom: 0;
+    left: 100%;
+}
+
+.chat-block__incoming-message::after,
+.chat-block__message::after {
+    background-color: #eee;
+    border-radius: 0 0 0 10px;
+}
+
+.chat-block__incoming-message::before,
+.chat-block__incoming-message::after {
+    transform:scaleX(-1);
+    right: 100%;
+    left: auto;
 }
 
 .chat-block__message {
    margin-left: auto;
+   border-radius: 5px 5px 0 5px;
 }
 
 .chat-block__incoming-message {
     margin-right: auto;
+    border-radius: 5px 5px 5px 0;
 }
 
 .chat-block__name-of-user {

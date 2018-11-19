@@ -31,7 +31,6 @@ function addEventListeners() {
 			name, 
 			connecting: true
 		}
-		console.log(obj)
 		socket.send(JSON.stringify(obj));
 	});
 
@@ -43,7 +42,6 @@ function addEventListeners() {
 	socket.addEventListener('message', function(e){
 		let obj = JSON.parse(e.data);
 		let name = getPersonName();
-		console.log(obj)
 
 		if(obj.users) {
 			statusBlockElem.innerHTML = "";
