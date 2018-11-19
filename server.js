@@ -18,27 +18,12 @@ const db_config = {
   password: ''
 };
 
-let connection = mysql.createConnection(db_config);
+let connection;
 
-connection.query('CREATE DATABASE IF NOT EXISTS chat', function (err) {
-  if (err) throw err;
-  connection.query('USE chat', function (err) {
-    if (err) throw err;
-    connection.query('CREATE TABLE IF NOT EXISTS users('
-      + 'id INT NOT NULL AUTO_INCREMENT,'
-      + 'PRIMARY KEY(id),'
-      + 'firstname VARCHAR(30),'
-      + 'lastname VARCHAR(30),'
-      + 'passwords VARCHAR(50),'
-      + 'login VARCHAR(50),'
-      + 'age INT(2)'
-      +  ')', function (err) {
-      if (err) throw err;
-    });
-  });
-});
+
 
 function handleDisconnect() {
+  connection = mysql.createConnection(db_config);
   connection.connect(function(err) {              
     if(err) {                                    
       setTimeout(handleDisconnect, 2000); 
@@ -54,6 +39,24 @@ function handleDisconnect() {
 }
 
 handleDisconnect();
+
+connection.query('CREATE DATABASE IF NOT EXISTS chat', function (err) {
+  if (err) throw err;
+  connection.query('USE chat', function (err) {
+    if (err) throw err;
+    connection.query('CREATE TABLE IF NOT EXISTS users('
+      + 'id INT NOT NULL AUTO_INCREMENT,'
+      + 'PRIMARY KEY(id),'
+      + 'firstname VARCHAR(30),'
+      + 'lastname VARCHAR(30),'
+      + 'age INT(2),'
+      + 'login VARCHAR(50),'
+      + 'password VARCHAR(50)'
+      +  ')', function (err) {
+      if (err) throw err;
+    });
+  });
+});
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -88,15 +91,15 @@ app.post("/registration", function(req, res) {
 });
 
 app.get("/login", function(req, res) {
-  res.sendfile("public/login.html");
+  res.sendFile("public/login.html");
 });
 
 app.get("/registration", function(req, res) {
-  res.sendfile("public/registration.html");
+  res.sendFile("public/registration.html");
 });
 
 app.get("/chat", function(req, res) {
-  res.sendfile("public/chat.html");
+  res.sendFile("public/chat.html");
 });
 
 let webSocketServer = new WebSocketServer.Server({port: +server_config.portWs});
