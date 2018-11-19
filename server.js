@@ -91,15 +91,15 @@ app.post("/registration", function(req, res) {
 });
 
 app.get("/login", function(req, res) {
-  res.sendFile("public/login.html");
+  res.sendFile(__dirname + "/public/login.html");
 });
 
 app.get("/registration", function(req, res) {
-  res.sendFile("public/registration.html");
+  res.sendFile(__dirname + "/public/registration.html");
 });
 
 app.get("/chat", function(req, res) {
-  res.sendFile("public/chat.html");
+  res.sendFile(__dirname + "/public/chat.html");
 });
 
 let webSocketServer = new WebSocketServer.Server({port: +server_config.portWs});
