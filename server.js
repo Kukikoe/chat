@@ -75,7 +75,7 @@ app.get("/registration", function(req, res) {
 });
 
 app.get("/chat", function(req, res) {
-  res.sendfile("public/index.html");
+  res.sendfile("public/chat.html");
 });
 
 let webSocketServer = new WebSocketServer.Server({port: 8081});
@@ -83,7 +83,7 @@ let users = [];
 
 webSocketServer.on('connection', function(ws) {
   console.log("новое соединение");
-  
+
   let userIndex;
 
   ws.on('message', function(message) {

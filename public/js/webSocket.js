@@ -2,8 +2,8 @@ if (!window.WebSocket) {
 	document.body.innerHTML = 'WebSocket в этом браузере не поддерживается.';
 }
 let socket = new WebSocket("ws://localhost:8081");
-const btnExetElem = document.querySelector(".chat-block__exit-btn");
-const statusBlockElem = document.querySelector(".main-block__status");
+const btnExetElem = document.querySelector(".main-block__exit-btn");
+const statusBlockElem = document.querySelector(".chat-container__status");
 const chatBlockInputElem = document.querySelector(".chat-block__input");
 const sendMessageBtnElem = document.querySelector(".chat-block__send-msg");
 
@@ -17,11 +17,10 @@ socket.addEventListener('open', function(){
 	socket.send(JSON.stringify(obj));
 });
 
-/*socket.addEventListener('close', function(e){
-
-	//setStatus("Offline");
-	//document.location.href = "/login";
-});*/
+socket.addEventListener('close', function(e){
+	localStorage.removeItem('LoggedInUser');
+	document.location.href = "/login";
+});
 
 socket.addEventListener('message', function(e){
 	let obj = JSON.parse(e.data);
