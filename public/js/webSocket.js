@@ -1,70 +1,93 @@
 if (!window.WebSocket) {
 	document.body.innerHTML = 'WebSocket в этом браузере не поддерживается.';
 }
-let socket = new WebSocket("ws://localhost:8081");
-const btnExetElem = document.querySelector(".main-block__exit-btn");
-const statusBlockElem = document.querySelector(".chat-container__status");
-const chatBlockInputElem = document.querySelector(".chat-block__input");
-const sendMessageBtnElem = document.querySelector(".chat-block__send-msg");
-
-socket.addEventListener('open', function(){
-	let name = getPersonName();
-	let obj = {
-		name, 
-		connecting: true
+function isPersonLogIn() {
+	let userObj = JSON.parse(localStorage.getItem("LoggedInUser"));
+	if (userObj === null) {
+		return false;
 	}
-	console.log(obj)
-	socket.send(JSON.stringify(obj));
-});
+	return true;
+}
 
-socket.addEventListener('close', function(e){
-	localStorage.removeItem('LoggedInUser');
-	document.location.href = "/login";
-});
-
-socket.addEventListener('message', function(e){
-	let obj = JSON.parse(e.data);
-	let name = getPersonName();
-	console.log(obj)
-	
-	if(obj.users) {
-		statusBlockElem.innerHTML = "";
-		for (let i = 0; i < obj.users.length; i++) {
-			if(name === obj.users[i].name) continue;
-			addPersonInStatusBlock(obj.users[i].name, obj.users[i].status);
-		}
+window.addEventListener("load", function() {
+	if(!isPersonLogIn()) {
+		document.location.href = "/login";
 		return;
 	}
-	
-	if(name === obj.message.name) {
-		showMessage(obj.message.text, obj.message.name, obj.message.time, "chat-block__message"); 
-		return;
-	}
-	showMessage(obj.message.text, obj.message.name, obj.message.time, "chat-block__incoming-message");
-});
+	addEventListeners();
+})
 
-sendMessageBtnElem.addEventListener("click", function() {
-  var outgoingMessage = chatBlockInputElem.value;
-  chatBlockInputElem.value = "";
-	let user = JSON.parse(localStorage.getItem("LoggedInUser"));
-	let userName = user.firstname + " " + user.lastname;
-	let now = new Date();
-	let time = now.getHours() + ":" + now.getMinutes();
-	let obj = {
-		message: {
-			name: userName,
-			text: outgoingMessage,
-			time
+function addEventListeners() {
+	// hostname is localhost on this machine and local ip of this machine on other computers
+	let socket = new WebSocket("ws://" + window.location.hostname + ":8081"); 
+	const btnExetElem = document.querySelector(".main-block__exit-btn");
+	const statusBlockElem = document.querySelector(".chat-container__status");
+	const chatBlockInputElem = document.querySelector(".chat-block__input");
+	const sendMessageBtnElem = document.querySelector(".chat-block__send-msg");
+
+	socket.addEventListener('open', function(){
+		let name = getPersonName();
+		let obj = {
+			name, 
+			connecting: true
 		}
-	}
-	socket.send(JSON.stringify(obj));
-});
+		console.log(obj)
+		socket.send(JSON.stringify(obj));
+	});
 
-btnExetElem.addEventListener("click", function() {
+	socket.addEventListener('close', function(e){
+		localStorage.removeItem('LoggedInUser');
+		document.location.href = "/login";
+	});
+
+	socket.addEventListener('message', function(e){
+		let obj = JSON.parse(e.data);
+		let name = getPersonName();
+		console.log(obj)
+
+		if(obj.users) {
+			statusBlockElem.innerHTML = "";
+			for (let i = 0; i < obj.users.length; i++) {
+				if(name === obj.users[i].name) continue;
+				addPersonInStatusBlock(obj.users[i].name, obj.users[i].status, statusBlockElem);
+			}
+			return;
+		}
+
+		if(name === obj.message.name) {
+			showMessage(obj.message, "chat-block__message"); 
+			return;
+		}
+		showMessage(obj.message, "chat-block__incoming-message");
+	});
+
+	sendMessageBtnElem.addEventListener("click", function() {
+		var outgoingMessage = chatBlockInputElem.value;
+		chatBlockInputElem.value = "";
+		let user = JSON.parse(localStorage.getItem("LoggedInUser"));
+		let userName = user.firstname + " " + user.lastname;
+		let now = new Date();
+
+		let time = addZeroBefore(now.getHours()) + ":" + addZeroBefore(now.getMinutes());
+		let obj = {
+			message: {
+				name: userName,
+				text: outgoingMessage,
+				time
+			}
+		}
+		socket.send(JSON.stringify(obj));
+	});
+
+	btnExetElem.addEventListener("click", function() {
   if (socket.readyState !== 1) return; // If not OPEN 
   socket.close();
 });
+}
 
+function addZeroBefore(time) {
+	return ("0" + time).slice(-2);
+}
 
 function getPersonName() {
 	let currentUser = JSON.parse(localStorage.getItem("LoggedInUser"));
@@ -72,7 +95,7 @@ function getPersonName() {
 	return name;
 }
 
-function addPersonInStatusBlock(name, status) {
+function addPersonInStatusBlock(name, status, statusBlockElem) {
 	let personElem = document.createElement('div');
 	personElem.className = "person";
 
@@ -98,7 +121,7 @@ function addPersonInStatusBlock(name, status) {
 	statusBlockElem.appendChild(personElem);
 }
 
-function showMessage(message, name, time, className) {
+function showMessage({text, name, time}, className) {
 	let messageElem = document.createElement('div');
 	messageElem.className = className;
 	let nameElem = document.createElement('div');
@@ -108,7 +131,7 @@ function showMessage(message, name, time, className) {
 	timeElem.className = "chat-block__time";
 	timeElem.innerHTML = time;
 	messageElem.appendChild(nameElem);
-	messageElem.appendChild(document.createTextNode(message));
+	messageElem.appendChild(document.createTextNode(text));
 	messageElem.appendChild(timeElem);
 	document.getElementById('subscribe').appendChild(messageElem);
 }

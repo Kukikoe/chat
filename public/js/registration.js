@@ -13,6 +13,7 @@ registrationBtnElem.addEventListener("click", function() {
   	return;
   }
   xhr.setRequestHeader('Content-Type', 'application/json');
+
   xhr.send(toJSONString(registrationBlockElem));
 
   xhr.onreadystatechange = function() {
@@ -27,11 +28,7 @@ registrationBtnElem.addEventListener("click", function() {
   		registrationErrorBlockElem.innerHTML = response.error.errorText;
   	}
   	if (response.success) {
-
+  		document.location.href = response.redirect;
   	}
   }
 });
-
-function getAnswer(errorBlock) {
-	
-}

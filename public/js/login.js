@@ -23,7 +23,12 @@ btnLoginElem.addEventListener("click", function() {
     }
     if (response.success) {
       localStorage.setItem("LoggedInUser", JSON.stringify(response.success.user));
-      document.location.href = response.redirect;
+      
+      setTimeout(() => {
+        document.location.href = response.redirect;
+      }, 100);
     }
   }
 });
+
+

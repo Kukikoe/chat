@@ -1,6 +1,8 @@
 body {
     margin: 0;
     padding: 0;
+    font-family: sans-serif;
+    font-size: 14px;
 }
 
 .audentification-block {
@@ -105,12 +107,12 @@ body {
 }
 
 .person__name {
-    color: #000;
+    color: #fff;
     font-weight: bold;
 }
 
 .person__status {
-    color: #fff;
+    color: #ddd;
 }
 
 .chat-block {

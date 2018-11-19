@@ -3,9 +3,14 @@ const bodyParser = require("body-parser");
 const morgan = require('morgan');
 const mysql = require('mysql');
 const WebSocketServer = new require('ws');
-
+const ip = require("ip");
 const app = express();
 
+const server_config = {
+  ip: ip.address(),
+  portWs: "8081",
+  portFront: "8080"
+}
 // DB Init
 const db_config = {
   host: 'localhost',
@@ -56,12 +61,14 @@ app.post("/login", function(req, res) {
 
 app.post("/registration", function(req, res) {
   let {name, surname, age, login, password} = req.body;
+  console.log("password", password)
   connection.query("SELECT * FROM users WHERE login=?", [login], function(err, rows) {
     if (err) throw err;
     if (rows.length) return res.send({error: { errorText: "User with such login already exists"}});
     connection.query("INSERT INTO users (firstname, lastname, age, login, password) VALUES (?, ?, ?, ?, ?)", [name, surname, age, login, password], function(error, elem) {
      if (error) throw error;
-     return res.send({success: { successText: "You registrate"}});
+
+     return res.send({success: { successText: "You registrate"}, redirect: "login"});
    });
   });
 });
@@ -78,7 +85,7 @@ app.get("/chat", function(req, res) {
   res.sendfile("public/chat.html");
 });
 
-let webSocketServer = new WebSocketServer.Server({port: 8081});
+let webSocketServer = new WebSocketServer.Server({port: +server_config.portWs});
 let users = [];
 
 webSocketServer.on('connection', function(ws) {
@@ -91,9 +98,9 @@ webSocketServer.on('connection', function(ws) {
     let outgoingMsg = {};
 
     if (incomingMsg.connecting) {
-      let temp = users.filter(user => user.name === incomingMsg.name).length;
+      let userIsPresent = users.filter(user => user.name === incomingMsg.name).length;
 
-      if (temp) {
+      if (userIsPresent) {
         users = users.map((user) => {
           if (user.name === incomingMsg.name) {
             user.status = "online";
@@ -138,4 +145,6 @@ webSocketServer.on('connection', function(ws) {
   });
 });
 
-app.listen(8080, () => console.log("Server is listening. Ports: 8080, 8081"));
+app.listen(+server_config.portFront, () => console.log("Server is listening. Ip: " + server_config.ip + ":" + server_config.portFront));
+
+
