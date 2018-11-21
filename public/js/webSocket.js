@@ -49,9 +49,17 @@ function addEventListeners() {
 				if(name === obj.users[i].name) continue;
 				addPersonInStatusBlock(obj.users[i].name, obj.users[i].status, statusBlockElem);
 			}
+			if (name === obj.users[obj.users.length - 1].name) {
+				obj.messages.forEach((message) => {
+					if(name === message.name) {
+						showMessage(message, "chat-block__message"); 
+						return;
+					}
+					showMessage(message, "chat-block__incoming-message");
+				});
+			}
 			return;
 		}
-
 		if(name === obj.message.name) {
 			showMessage(obj.message, "chat-block__message"); 
 			return;

@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const mysql = require('mysql');
 const WebSocketServer = new require('ws');
 const ip = require("ip");
+const fs = require("fs");
+const path = require('path');
 const app = express();
 
 const server_config = {
@@ -20,8 +22,6 @@ const db_config = {
 
 let connection;
 
-
-
 function handleDisconnect() {
   connection = mysql.createConnection(db_config);
   connection.connect(function(err) {              
@@ -32,7 +32,7 @@ function handleDisconnect() {
   connection.on('error', function(err) {
     if(err.code === 'PROTOCOL_CONNECTION_LOST') { 
       handleDisconnect();                         
-    } else {                                     
+    } else {                                 
       throw err;                                  
     }
   });
@@ -58,10 +58,12 @@ connection.query('CREATE DATABASE IF NOT EXISTS chat', function (err) {
   });
 });
 
+let accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(morgan('dev'));
+app.use(morgan('combined', { stream: accessLogStream }));
 app.use(express.static(__dirname + "/public"));
 
 
@@ -104,12 +106,12 @@ app.get("/chat", function(req, res) {
 
 let webSocketServer = new WebSocketServer.Server({port: +server_config.portWs});
 let users = [];
+let arrayMessages = [];
 
 webSocketServer.on('connection', function(ws) {
   console.log("новое соединение");
-
   let userIndex;
-
+ 
   ws.on('message', function(message) {
     let incomingMsg = JSON.parse(message);
     let outgoingMsg = {};
@@ -136,12 +138,15 @@ webSocketServer.on('connection', function(ws) {
         user.index = userIndex;
       }
       outgoingMsg.users = users;
+      outgoingMsg.messages = arrayMessages;
     }
 
     if (incomingMsg.message) {
       outgoingMsg.message = incomingMsg.message;
+      arrayMessages.push(outgoingMsg.message);
+
     }
-    console.log('получено сообщение ' + incomingMsg);
+    console.log('получено сообщение ');
 
     webSocketServer.clients.forEach(client =>  {
       if (client.readyState !== WebSocketServer.OPEN) return;

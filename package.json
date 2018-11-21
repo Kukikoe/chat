@@ -5,8 +5,10 @@
   "main": "public/script.js",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "fs": "0.0.1-security",
     "ip": "^1.1.5",
     "morgan": "^1.9.1",
+    "path": "^0.12.7",
     "ws": "^6.1.0"
   },
   "devDependencies": {
