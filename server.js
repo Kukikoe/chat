@@ -8,6 +8,14 @@ const fs = require("fs");
 const path = require('path');
 const app = express();
 
+const log4js = require('log4js');
+log4js.configure({
+  appenders: { user: { type: 'file', filename: 'users.log' }, message:  { type: 'file', filename: 'users.log' }},
+  categories: { default: { appenders: ['user', 'message'], level: 'info' } }
+});
+const logger = log4js.getLogger('user');
+const loggerMes = log4js.getLogger('message');
+
 const server_config = {
   ip: ip.address(),
   portWs: "8081",
@@ -118,7 +126,7 @@ webSocketServer.on('connection', function(ws) {
 
     if (incomingMsg.connecting) {
       let userIsPresent = users.filter(user => user.name === incomingMsg.name).length;
-
+      logger.info('User ' + incomingMsg.name + " logged in");
       if (userIsPresent) {
         users = users.map((user) => {
           if (user.name === incomingMsg.name) {
@@ -144,7 +152,7 @@ webSocketServer.on('connection', function(ws) {
     if (incomingMsg.message) {
       outgoingMsg.message = incomingMsg.message;
       arrayMessages.push(outgoingMsg.message);
-
+      loggerMes.info('получено сообщение "' + outgoingMsg.message.text + '" от ' +  outgoingMsg.message.name + ' в ' + outgoingMsg.message.time);
     }
     console.log('получено сообщение ');
 
@@ -156,6 +164,7 @@ webSocketServer.on('connection', function(ws) {
 
   ws.on('close', function(e) {
     users[userIndex].status = "offline";
+    logger.info('User ' + users[userIndex].name + " logged out");
 
     webSocketServer.clients.forEach(client =>  {
       if (client.readyState !== WebSocketServer.OPEN) return;
